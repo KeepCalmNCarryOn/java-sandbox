@@ -1,4 +1,7 @@
 package common_exceptions;
+
+import java.util.Scanner;
+
 /**
  * Examples of IllegalArgumentException.  
  * 
@@ -11,10 +14,20 @@ public class IllegalArgument {
 	public static void main(String args[]){
 		int odd = 11;
         new IllegalArgument().evenNumber(odd);
-        System.err.println("\n");
         illegalArgForBoxing();
+        invalidCharSet();
 	}
 
+	/**
+	 * Attempts to open a Scanner using a character set that doesn't exist.
+	 */
+	public static void invalidCharSet(){
+		try{
+			Scanner s = new Scanner(System.in, "UTF-9");
+		}catch(IllegalArgumentException e){
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * Accepts and even number.
 	 * @param number
@@ -41,6 +54,8 @@ public class IllegalArgument {
 			System.out.println(theNumberThree + " blind mice");
 		}catch(IllegalArgumentException e){
 			e.printStackTrace();
+			System.err.flush();
+			System.err.println("\nNOTE: NumberFormatException extends IllegalArgumentException\n");
 		}
 	}
 }

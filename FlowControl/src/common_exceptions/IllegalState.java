@@ -5,8 +5,8 @@ import java.util.Scanner;
 /**
  * Examples of IllegalStateException.  
  * 
- * Thrown when the state of the environment doesn't match the operation being
- * attempted.  
+ * These exceptions are thrown when the state of the environment doesn't match 
+ * the operation being attempted.  
  * @author Tonisha
  *
  */

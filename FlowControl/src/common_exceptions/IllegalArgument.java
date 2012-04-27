@@ -24,6 +24,7 @@ public class IllegalArgument {
 	public static void invalidCharSet(){
 		try{
 			Scanner s = new Scanner(System.in, "UTF-9");
+			s.close();
 		}catch(IllegalArgumentException e){
 			e.printStackTrace();
 		}

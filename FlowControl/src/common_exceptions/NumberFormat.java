@@ -26,6 +26,7 @@ public class NumberFormat {
 	public static void cannotParse(){
 		try{
 			float num = Float.parseFloat("pi");
+			System.out.println("num: " + num);
 		}catch(NumberFormatException e){
 			e.printStackTrace();
 		}

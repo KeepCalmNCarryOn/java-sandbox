@@ -9,7 +9,7 @@ public class TwoStmtAssert {
 		boolean sunny = true;
 		boolean interesting = false;
 		
-		assert(sunny): "San Diego is sunny: " + sunny;
-		assert(interesting): "San Diego is interesting: " + interesting;
+		assert(!sunny): "San Diego is sunny: " + sunny;
+		assert(!interesting): "San Diego is interesting: " + interesting;
 	}
 }

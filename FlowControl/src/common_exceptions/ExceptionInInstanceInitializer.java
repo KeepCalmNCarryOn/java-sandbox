@@ -6,7 +6,7 @@ package common_exceptions;
  *
  */
 public class ExceptionInInstanceInitializer {
-	static ExceptionInInstanceInitializer loki = 
+	static ExceptionInInstanceInitializer thisClass = 
 			new ExceptionInInstanceInitializer();
 	
 	/**
@@ -29,7 +29,7 @@ public class ExceptionInInstanceInitializer {
 	
 	// This initializer accesses an object that is not yet available.
 	{
-		loki.toString();
+		thisClass.toString();
 	}
 
 }

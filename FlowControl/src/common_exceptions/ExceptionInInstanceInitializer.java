@@ -1,7 +1,8 @@
 package common_exceptions;
 /** 
  * Examples of a commonly seen exception -the ExceptionInInitializerError.
- * This error occurs when a mistake is made in an initializer.
+ * This error occurs when an exception occurs during evaluation of a static 
+ * initializer or the initializer for a static variable.
  * @author Tonisha Whyte
  *
  */

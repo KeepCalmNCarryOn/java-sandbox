@@ -1,6 +1,9 @@
 package common_exceptions;
 /** 
  * Examples of the ExceptionInInitializerError in a static initializer.
+ * This error occurs when an exception occurs during evaluation of a static 
+ * initializer or the initializer for a static variable.
+ * 
  * @author Tonisha Whyte
  *
  */

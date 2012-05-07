@@ -1,5 +1,9 @@
 package assertions;
 
+/**
+ * NOTE:  Assertions are turned off by default.  
+ * Use commands -ea, -da, -dsa to enable /disable assertions.
+ */
 public class OneStmtAssert {
 
 	/**

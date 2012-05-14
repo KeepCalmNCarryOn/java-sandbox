@@ -49,8 +49,8 @@ public abstract class UniversityMember {
 	 * Checks the value of the given id against {@link UniversityMember#sidStart} to
      * see if the id represents a {@link Student}.
 	 * 
-	 * @param id
-	 * @return
+	 * @param id The id of the university member.
+	 * @return False if it's not a student
 	 */
 	public static boolean isStudent(int id){
 		if (id >= sidStart){

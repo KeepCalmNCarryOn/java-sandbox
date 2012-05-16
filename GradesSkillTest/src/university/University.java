@@ -3,8 +3,9 @@ package university;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.Set;
 enum LetterGrade {A, B, C, D, F, P, NP};
 enum UniMemberType {STUDENT, INSTRUCTOR, OUTSIDER};
 
@@ -12,9 +13,9 @@ public class University {
     BufferedReader reader;
 	/**
 	 * All the instructors at the University organized by their ID 
-         * numbers.
+     * numbers.
 	 */
-	private Hashtable<String, Instructor> faculty;
+	private Hashtable<Integer, Instructor> faculty;
 	
 	/**
 	 * All the courses offered at the University organized by name.
@@ -32,7 +33,7 @@ public class University {
 	 */
 	public University (){
 		reader = new BufferedReader(new InputStreamReader(System.in));
-		faculty = new Hashtable<String, Instructor>();
+		faculty = new Hashtable<Integer, Instructor>();
 		classes = new Hashtable<String, Course>();
 		students = new Hashtable<Integer, Student>();
 	}
@@ -43,7 +44,7 @@ public class University {
 	 */
 	public Instructor addInstructor (String name){
 		Instructor i = new Instructor(name);
-		faculty.put(name, i);
+		faculty.put(i.getId(), i);
 		return i;
 	}
 
@@ -53,8 +54,8 @@ public class University {
 	 * 
 	 * @param name The name of the Instructor to return.
 	 */
-	public Instructor getInstructor(String name){
-		return faculty.get(name);
+	public Instructor getInstructor(int id){
+		return faculty.get(id);
 	}
 
 	
@@ -62,6 +63,7 @@ public class University {
 	 * Adds courses to the University.
 	 * 
 	 * @param name The name of the course to be added.
+	 * @param i The instructor that teaches the course.
 	 */
 	public Course createCourse (String name, Instructor i){
 		Course c = new Course(name, i);
@@ -104,13 +106,30 @@ public class University {
 	 * i/o.
 	 * @return Returns a valid course name formatted to be used as a key.
 	 */
-	public String validateCourseName(String queryPurpose) throws IOException{
+	public String validateCourseName(String queryPurpose, int id) 
+			throws IOException{
 		String courseName = null;
 		boolean validCourse = false;
 		do{
 			System.out.print("Enter the course name " + queryPurpose);
 			courseName = reader.readLine().toLowerCase().trim();
 			if(classes.containsKey(courseName)){
+				Course crs = classes.get(courseName);
+				//check whether student is enrolled in this course
+				if(students.containsKey(id)){ 
+					if(crs.getRoster().containsKey(id)){
+						return courseName;
+					}
+					else{
+						System.out.println("You are not enrolled in this" +
+								" course!!");
+						continue;
+					}
+				}
+				// check whether professor is teaching this course 
+				else{
+					
+				}
 	    		return courseName;
 	    	}
 	    	else{
@@ -122,7 +141,22 @@ public class University {
 	
 	public void instructorIO(int id) throws IOException{
 		System.out.println("Instructor IO");
-		String courseName = validateCourseName("to begin entering grades: ");
+		String[] courseLoad = faculty.get(id).getClasses();
+		
+		// display all the courses this instructor teaches
+		System.out.println("Here is your course load:");
+		for (String s : courseLoad){
+			System.out.println(s);
+		}	
+		String courseName = validateCourseName("to begin entering grades: ", 
+				id);
+		
+		//display all the students in the course
+		HashMap<Integer, Student> roster = classes.get(courseName).getRoster();
+		Set<Integer> pupils = roster.keySet();
+		for(Integer i : pupils){
+			System.out.printf("%1$9d %2$s\n", i, roster.get(i).getName()); 
+		}
 	}
 
 	/**
@@ -131,21 +165,11 @@ public class University {
 	 * @param id The student's id.
 	 */
 	public void studentIO(int id) throws IOException{
-		String courseName;
-		boolean validCourse = false;
-		System.out.println("Student IO");		
-	    do{
-	    	System.out.print("Enter the course name to see your grade: ");
-	    	courseName = reader.readLine();		    
-	    	if(classes.containsKey(courseName.toLowerCase().trim())){
-	    		String gradeInClass = 
-	    				classes.get(courseName.toLowerCase().trim()).getGrade(id);
-	    		System.out.println(gradeInClass);
-	    	}
-	    	else{
-	    		System.out.println("That's not a valid course name.");
-	    	}
-	    }while(!validCourse);
+		System.out.println("Student IO");				
+		String courseName = validateCourseName("to see your grade: ", id);
+	    String gradeInClass = 
+	    		classes.get(courseName).getGrade(id);
+	    System.out.println(gradeInClass);
 	}
 
 	/**
@@ -166,13 +190,13 @@ public class University {
 	
 		// create courses
 	    Course c1 = rc.createCourse("Math 101", 
-	    		rc.getInstructor(ic.getName()));
+	    		rc.getInstructor(ic.getId()));
 	    Course c2 = rc.createCourse("Psychology 143", 
-	    		rc.getInstructor(ib.getName()));
+	    		rc.getInstructor(ib.getId()));
 	    Course c3 = rc.createCourse("Agriculture 124", 
-	    		rc.getInstructor(ia.getName()));
+	    		rc.getInstructor(ia.getId()));
 	    Course c4 = rc.createCourse("Nutrition 101", 
-	    		rc.getInstructor(ic.getName()));
+	    		rc.getInstructor(ic.getId()));
 	    
 	    // create students 
 	    Student s1 = rc.createStudent("Kelsey Grammar");  
@@ -186,8 +210,6 @@ public class University {
 	    s3.addCourse(c2);
 	    s3.addCourse(c3);
 	    s3.addCourse(c1);
-	    
-	    
 	    
 	    // get user id
 	    int id = 0;
@@ -207,13 +229,14 @@ public class University {
 	    	}
 	    }while(member == UniMemberType.OUTSIDER);
 	    
-	    // identify student or instructor
-    	if (UniversityMember.isStudent(Integer.valueOf(id))){
-    		rc.studentIO(id);
-    	}		
-    	else{
-    		rc.instructorIO(id);
-    	}
+	    // start student or instructor i/o.
+	    switch(member){
+	    case STUDENT:
+	    	rc.studentIO(id);
+	    	break;
+	    case INSTRUCTOR:
+	    	rc.instructorIO(id);
+	    }
     	rc.reader.close();
 	}	
 }

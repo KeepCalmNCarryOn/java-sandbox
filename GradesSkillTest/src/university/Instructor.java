@@ -1,41 +1,13 @@
 package university;
 
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * @author Tonisha
  *
  */
 public class Instructor extends UniversityMember {
-	/**
-	 * Exception 
-	 * Indicates that the instructor hasn't reported the grade of the student 
-	 * yet.
-	 * @author Tonisha Whyte
-	 *
-	 */
-	public class GradeNotPostedException extends Exception {
-		private static final long serialVersionUID = 1L;
-
-		public GradeNotPostedException(){
-			super();
-		}
-	}
-
-	/**
-	 * Indicates that the course does not contain a student that is being 
-	 * queried.
-	 * @author Tonisha Whyte
-	 *
-	 */
-	public class StudentNotInCourseException extends Exception {
-		private static final long serialVersionUID = 1L;
-
-		public StudentNotInCourseException (){
-			super();
-		}
-	}
-
 	/**
 	 * Collection of student grades sorted by course.
 	 */
@@ -50,6 +22,36 @@ public class Instructor extends UniversityMember {
 		super(name);
 		id = UniversityMember.nextIID++;
 		reports = new HashMap<Course, HashMap<Integer,Grade>>();
+	}
+	
+	/**
+	 * Returns the instructor's course load.
+	 * @return The set of classes that instructor teaches.
+	 */
+	public String[] getClasses(){
+		Set<Course> courses = reports.keySet();
+		String [] courseLoad = new String[courses.size()];
+		int i = 0;
+		
+		for (Course c: courses){
+			courseLoad[i] = c.getName();
+		}
+		return courseLoad;
+	}
+	
+	/**
+	 * Exception 
+	 * Indicates that the instructor hasn't reported the grade of the student 
+	 * yet.
+	 * @author Tonisha Whyte
+	 *
+	 */
+	public class GradeNotPostedException extends Exception {
+		private static final long serialVersionUID = 1L;
+
+		public GradeNotPostedException(){
+			super();
+		}
 	}
 
     /**
@@ -94,19 +96,14 @@ public class Instructor extends UniversityMember {
 	 * this student and course pair.
 	 */
 	public Grade getGrade(int student, Course crs) 
-			throws GradeNotPostedException, StudentNotInCourseException{
+			throws GradeNotPostedException{
 		HashMap<Integer, Grade> gradeList = reports.get(crs);
 		Grade g = null;
 
-		if (gradeList.containsKey(student)){
 			g = gradeList.get(student);
 			if (g == null){
 				throw new GradeNotPostedException();
 			}
-		}
-		else {
-			throw new StudentNotInCourseException();
-		}
 		return g;
 	}
 }

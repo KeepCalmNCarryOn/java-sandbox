@@ -21,6 +21,14 @@ public class Course {
   }
   
   /**
+   * Returns the name of the course.
+   * @return Name of course.
+   */
+  public String getName() {
+	return name;
+  }
+  
+  /**
    * Adds a student to the roster.
    * @param id The ID number of the student to add to the {@link #roster}.
    */
@@ -44,8 +52,6 @@ public class Course {
 		  report += instructor.getGrade(id, this).toString();
 	  }catch(Instructor.GradeNotPostedException e){
 		  report = "Grade has not posted yet";
-	  }catch(Instructor.StudentNotInCourseException e){
-		  report = "You are not enrolled in this course";
 	  }
 	  return report.concat(".");
   }

@@ -68,7 +68,6 @@ public class University {
 	public Course createCourse (String name, Instructor i){
 		Course c = new Course(name, i);
 		classes.put(name.toLowerCase().trim(), c);
-		
 		return c; 
 	}
 	
@@ -164,8 +163,8 @@ public class University {
 		HashMap<Integer, Student> roster = classes.get(courseName).getRoster();
 		Set<Integer> pupils = roster.keySet();
 		System.out.println("Here are your students: ");
-		System.out.printf("%1$9s %2$s", "id", "name");
-		System.out.printf("%1$9s %2$s", "--", "----");
+		System.out.printf("%1$9s %2$s\n", "id", "name");
+		System.out.printf("%1$9s %2$s\n", "--", "----");
 		for(Integer i : pupils){
 			System.out.printf("%1$9d %2$s\n", i, roster.get(i).getName()); 
 		}
@@ -175,27 +174,35 @@ public class University {
 		int studentToGrade = 0;
 		String[] tokensIn;
 		Grade grade = null;
+		String errorMsg = "Student-grade combo not entered correctly." +
+				"  Try again.";
 		
 		do{
-			System.out.println("Enter student id [a space] grade or \"STOP\"");
+			System.out.print("Enter [id grade] or \"STOP\": ");
 			tokensIn = reader.readLine().split("\\s");
-			String errorMsg = "Student-grade combo not entered correctly." +
-					"  Try again.";
 			
 			// query again if both student and id were not entered
 			if (tokensIn.length < expectedTokens){
-				System.out.println(errorMsg);
+				if(!tokensIn[0].equalsIgnoreCase("STOP")){
+					System.out.println(errorMsg);
+				}
 				continue;
 			}
 			
 			// collect student id
 			try {
 				studentToGrade = Integer.parseInt(tokensIn[0]);
+				// check if student is enrolled in class
+				if(!crs.getRoster().containsKey(studentToGrade)){
+					System.out.println("This student is not enrolled in this" +
+							" class.");
+					continue;					
+				}
 			}catch(NumberFormatException e){
 				System.out.println(errorMsg);
 				continue;
 			}
-			
+
 			// collect grade
 			String theirGrade = tokensIn[1];
 			Student pupil = students.get(studentToGrade);
@@ -230,8 +237,24 @@ public class University {
 					continue;
 				}
 			}
-			instructor.setGrade(crs, id, grade);
+			instructor.setGrade(crs, studentToGrade, grade);
 		}while(!tokensIn[0].equalsIgnoreCase("STOP"));
+		
+		//display all the students and their grades
+		System.out.println("Here are the grades you reported: ");
+		System.out.printf("%1$9s %2$25s %3$25s\n", "id", "name", "grade");
+		System.out.printf("%1$9s %2$25s %3$25s\n", "--", "----", "-----");
+		for(Integer p : pupils){
+			String pupilName = roster.get(p).getName();
+			String pupilGrade = null;
+			try{
+				pupilGrade = instructor.getGrade(p, crs).getValue().toString();
+			}catch(Instructor.GradeNotPostedException e){
+				pupilGrade = "Not posted yet";
+			}
+			System.out.printf("%1$9d %2$25s %3$25s\n", p, pupilName, 
+					pupilGrade); 
+		}		
 		
 	}
 
@@ -249,7 +272,7 @@ public class University {
 	}
 
 	/**
-	 * Driver.  Creates O
+	 * Driver.  
 	 * @param args
 	 * @throws IOException If I/O error occurs.
 	 */
@@ -286,31 +309,41 @@ public class University {
 	    s3.addCourse(c3);
 	    s3.addCourse(c1);
 	    
-	    // get user id
-	    int id = 0;
-	    UniMemberType member = UniMemberType.OUTSIDER;
-	    
-	    do{
-	    	System.out.print("Please enter your ID number: ");	    	
-	    	try{
-	    		id = Integer.valueOf(rc.reader.readLine());
-	    	}catch(NumberFormatException e){
-	    		System.out.println("Invalid ID number was entered.");
-	    		continue;
+	    boolean stop = false;
+	    while(!stop){
+		    // get user id
+		    int id = 0;
+		    UniMemberType member = UniMemberType.OUTSIDER;
+	    	do{
+	    		String c_line = null;
+	    		System.out.print("Please enter your ID number: ");	    	
+	    		try{
+	    			c_line = rc.reader.readLine();
+	    			id = Integer.valueOf(c_line);
+	    		}catch(NumberFormatException e){
+	    			if (c_line.equalsIgnoreCase("STOP")){
+	    				stop = true;
+	    			}
+	    			else{
+	    				System.out.println("Invalid ID number was entered.");
+	    			}
+	    			continue;
+	    		}
+	    		member = rc.checkMember(id);
+	    		if(member == UniMemberType.OUTSIDER){
+	    			System.out.println("Invalid ID number was entered.");
+	    		}
+	    	}while(member == UniMemberType.OUTSIDER);
+
+
+	    	// start student or instructor i/o.
+	    	switch(member){
+	    	case STUDENT:
+	    		rc.studentIO(id);
+	    		break;
+	    	case INSTRUCTOR:
+	    		rc.instructorIO(id);
 	    	}
-	    	member = rc.checkMember(id);
-	    	if(member == UniMemberType.OUTSIDER){
-	    		System.out.println("Invalid ID number was entered.");
-	    	}
-	    }while(member == UniMemberType.OUTSIDER);
-	    
-	    // start student or instructor i/o.
-	    switch(member){
-	    case STUDENT:
-	    	rc.studentIO(id);
-	    	break;
-	    case INSTRUCTOR:
-	    	rc.instructorIO(id);
 	    }
     	rc.reader.close();
 	}	

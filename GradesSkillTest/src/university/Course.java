@@ -4,6 +4,9 @@ import java.util.HashMap;
 public class Course {
   private String name;
   private Instructor instructor;
+  /**
+   * A list of the students in the course organized by ID.
+   */
   private HashMap<Integer, Student> roster;
   
   /**
@@ -47,9 +50,9 @@ public class Course {
    * @return The grade of the student.
    */
   public String getGrade(int id){
-	 String report = "Your grade in " + this.name + "was ";
+	 String report = "Your grade in " + this.name + " was ";
 	  try{
-		  report += instructor.getGrade(id, this).toString();
+		  report += instructor.getGrade(id, this).getValue();
 	  }catch(Instructor.GradeNotPostedException e){
 		  report = "Grade has not posted yet";
 	  }

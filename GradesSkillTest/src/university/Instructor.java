@@ -35,6 +35,7 @@ public class Instructor extends UniversityMember {
 		
 		for (Course c: courses){
 			courseLoad[i] = c.getName();
+			++i;
 		}
 		return courseLoad;
 	}
@@ -81,7 +82,6 @@ public class Instructor extends UniversityMember {
 			//TODO error check for empty course
 			HashMap<Integer, Grade> gradeList = reports.get(crs);
 			gradeList.put(id, grade);
-			// TODO do I need to worry about pass by value stuff here??
 		}catch (NullPointerException e){
 			//TODO complete error check for no students/grades in course.
 			e.printStackTrace();

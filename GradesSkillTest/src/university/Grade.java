@@ -1,7 +1,5 @@
 package university;
 
-import java.util.HashMap;
-
 public class Grade {
 	private Student pupil;
 	private LetterGrade value;
@@ -18,8 +16,8 @@ public class Grade {
 		return value;
 	}
 	
-	public void setValue(LetterGrade score){
-		value = score;
+	public Student getPupil(){
+		return pupil;
 	}
 	
 }

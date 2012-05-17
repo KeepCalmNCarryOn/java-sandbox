@@ -76,11 +76,12 @@ public class Instructor extends UniversityMember {
 	 * @param id The id number of the student in the course.
 	 * @param grade The grade the student earned.
 	 */
-	public void setGrade(Course crs, int id, LetterGrade score){
+	public void setGrade(Course crs, int id, Grade grade){
 		try{
 			//TODO error check for empty course
-			Grade grade = reports.get(crs).get(id);
-		    grade.setValue(score);
+			HashMap<Integer, Grade> gradeList = reports.get(crs);
+			gradeList.put(id, grade);
+			// TODO do I need to worry about pass by value stuff here??
 		}catch (NullPointerException e){
 			//TODO complete error check for no students/grades in course.
 			e.printStackTrace();

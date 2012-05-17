@@ -128,9 +128,14 @@ public class University {
 				}
 				// check whether professor is teaching this course 
 				else{
-					
+					if(crs.getInstructor().getId() == id){
+						return courseName;
+					}
+					else{
+						System.out.println("You do not teach this course.");
+						continue;
+					}					
 				}
-	    		return courseName;
 	    	}
 	    	else{
 	    		System.out.println("That's not a valid course name.");
@@ -141,22 +146,93 @@ public class University {
 	
 	public void instructorIO(int id) throws IOException{
 		System.out.println("Instructor IO");
-		String[] courseLoad = faculty.get(id).getClasses();
+		Instructor instructor = faculty.get(id);
+		String[] courseLoad = instructor.getClasses();
 		
 		// display all the courses this instructor teaches
 		System.out.println("Here is your course load:");
 		for (String s : courseLoad){
 			System.out.println(s);
 		}	
+		
+		//retrieve course to grade
 		String courseName = validateCourseName("to begin entering grades: ", 
 				id);
+		Course crs = classes.get(courseName);
 		
 		//display all the students in the course
 		HashMap<Integer, Student> roster = classes.get(courseName).getRoster();
 		Set<Integer> pupils = roster.keySet();
+		System.out.println("Here are your students: ");
+		System.out.printf("%1$9s %2$s", "id", "name");
+		System.out.printf("%1$9s %2$s", "--", "----");
 		for(Integer i : pupils){
 			System.out.printf("%1$9d %2$s\n", i, roster.get(i).getName()); 
 		}
+		
+		// Post the grade for students
+		int expectedTokens = 2;
+		int studentToGrade = 0;
+		String[] tokensIn;
+		Grade grade = null;
+		
+		do{
+			System.out.println("Enter student id [a space] grade or \"STOP\"");
+			tokensIn = reader.readLine().split("\\s");
+			String errorMsg = "Student-grade combo not entered correctly." +
+					"  Try again.";
+			
+			// query again if both student and id were not entered
+			if (tokensIn.length < expectedTokens){
+				System.out.println(errorMsg);
+				continue;
+			}
+			
+			// collect student id
+			try {
+				studentToGrade = Integer.parseInt(tokensIn[0]);
+			}catch(NumberFormatException e){
+				System.out.println(errorMsg);
+				continue;
+			}
+			
+			// collect grade
+			String theirGrade = tokensIn[1];
+			Student pupil = students.get(studentToGrade);
+			if(theirGrade.length() < 1){
+				System.out.println(errorMsg);
+				continue;				
+			}
+			else{
+				if(theirGrade.equalsIgnoreCase("A")){
+					grade = new Grade(pupil, LetterGrade.A);
+				}
+				else if(theirGrade.equalsIgnoreCase("B")){
+					grade = new Grade(pupil, LetterGrade.B);
+				}
+				else if(theirGrade.equalsIgnoreCase("C")){
+					grade = new Grade(pupil, LetterGrade.C);
+				}
+				else if(theirGrade.equalsIgnoreCase("D")){
+					grade = new Grade(pupil, LetterGrade.D);
+				}
+				else if(theirGrade.equalsIgnoreCase("F")){
+					grade = new Grade(pupil, LetterGrade.F);
+				}
+				else if(theirGrade.equalsIgnoreCase("P")){
+					grade = new Grade(pupil, LetterGrade.B);
+				}
+				else if(theirGrade.equalsIgnoreCase("NP")){
+					grade = new Grade(pupil, LetterGrade.NP);
+				}
+				else{
+					System.out.println(errorMsg);
+					continue;
+				}
+			}
+			instructor.setGrade(crs, id, grade);
+		}while(!tokensIn[0].equalsIgnoreCase("STOP"));
+		
 	}
 
 	/**
@@ -187,7 +263,6 @@ public class University {
 		Instructor ib = rc.addInstructor("Sid Jenkins");
 		Instructor ic = rc.addInstructor("Ramona Beesley");
 
-	
 		// create courses
 	    Course c1 = rc.createCourse("Math 101", 
 	    		rc.getInstructor(ic.getId()));
@@ -240,4 +315,3 @@ public class University {
     	rc.reader.close();
 	}	
 }
-

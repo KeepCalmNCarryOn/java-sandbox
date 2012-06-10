@@ -8,7 +8,7 @@ import hello.*;
  * This exception occurs when the JVM can't find a class it needs because of a 
  * command-line error, a classpath issue or a missing .class file.
  * 
- * NOTE:  Too see the exception run from the commandline 
+ * NOTE:  To see the exception run from the commandline 
  * i.e. in eclipse: 
  * 			1.  compile using the jar file that contains the hello package
  * 			2.  cd to the folder containing NoClassDefFound.class
